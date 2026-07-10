@@ -6,10 +6,13 @@ import { enviarMagicLink } from "@/lib/checkout/enviar-magic-link";
 export function PedirMagicLink({ next }: { next?: string } = {}) {
   const [email, setEmail] = useState("");
   const [enviado, setEnviado] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
   async function enviar() {
+    setEnviando(true);
     await enviarMagicLink(email, next);
     setEnviado(true);
+    setEnviando(false);
   }
 
   if (enviado) {
@@ -25,8 +28,12 @@ export function PedirMagicLink({ next }: { next?: string } = {}) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <button className="rounded bg-black text-white px-4 py-2" onClick={enviar} disabled={!email}>
-        Mandarme el link
+      <button
+        className="rounded bg-black text-white px-4 py-2 disabled:opacity-50"
+        onClick={enviar}
+        disabled={!email || enviando}
+      >
+        {enviando ? "Enviando..." : "Mandarme el link"}
       </button>
     </div>
   );
