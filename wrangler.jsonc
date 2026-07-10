@@ -16,5 +16,9 @@
   ],
   "images": {
     "binding": "IMAGES"
+  },
+  "vars": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://wngflbxbhdflcnlimsvc.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_Vtn0Ah1WqPwtyDqSeKP_0Q_f0CZd4cZ"
   }
 }
