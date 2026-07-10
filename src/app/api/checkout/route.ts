@@ -20,6 +20,19 @@ function fechaLimiteActivacion(): string {
 }
 
 export async function POST(request: Request) {
+  try {
+    return await handleCheckout(request);
+  } catch (e) {
+    // TEMPORAL: exponer el error real para diagnosticar el 500 en Cloudflare.
+    // Sacar este catch antes de mostrarle esto a un usuario real.
+    return NextResponse.json(
+      { ok: false, error: "excepcion", detalle: e instanceof Error ? e.message : String(e) },
+      { status: 500 },
+    );
+  }
+}
+
+async function handleCheckout(request: Request) {
   const body = (await request.json()) as Partial<CheckoutBody>;
 
   if (!body.producto_id || !body.email || !body.gateway) {
