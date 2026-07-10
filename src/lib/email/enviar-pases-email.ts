@@ -13,30 +13,39 @@ type PaseParaEmail = {
 // (ver memoria del proyecto: se va a migrar a mail.thefabpass.com).
 const REMITENTE = "FabPass <onboarding@resend.dev>";
 
-export async function enviarPasesPorEmail(email: string, nombreProducto: string, pases: PaseParaEmail[]) {
+export async function enviarPasesPorEmail(
+  email: string,
+  nombreProducto: string,
+  pases: PaseParaEmail[],
+  origin: string,
+) {
   const resendKey = process.env.RESEND_API_KEY;
   if (!resendKey) return;
 
   const resend = new Resend(resendKey);
 
+  // Se manda de las dos formas: como imagen alojada en una URL (la que
+  // realmente se ve dentro del cuerpo del mail en Gmail y la mayoría de los
+  // clientes) y como archivo adjunto (para poder guardarla aparte).
   const adjuntos = await Promise.all(
-    pases.map(async (p, i) => ({
+    pases.map(async (p) => ({
       filename: `fabpass-${p.codigo_alfanumerico}.png`,
-      content: await QRCode.toBuffer(`${p.codigo_qr}.${p.qr_firma}`, { width: 300 }),
-      content_id: `qr${i}`,
+      content: (await QRCode.toBuffer(`${p.codigo_qr}.${p.qr_firma}`, { width: 300 })).toString("base64"),
+      content_type: "image/png",
     })),
   );
 
   const cuerpoPases = pases
-    .map(
-      (p, i) => `
+    .map((p) => {
+      const qrUrl = `${origin}/api/qr?data=${encodeURIComponent(`${p.codigo_qr}.${p.qr_firma}`)}`;
+      return `
         <div style="margin-bottom:24px;padding:16px;border:1px solid #ddd;border-radius:8px;">
           <p style="margin:0 0 8px;font-weight:bold;">${p.titular_nombre} ${p.titular_apellido}</p>
           <p style="margin:0 0 8px;color:#666;font-size:14px;">${nombreProducto} — Código: ${p.codigo_alfanumerico}</p>
-          <img src="cid:qr${i}" width="220" height="220" alt="Código QR" />
+          <img src="${qrUrl}" width="220" height="220" alt="Código QR" />
         </div>
-      `,
-    )
+      `;
+    })
     .join("");
 
   const { error } = await resend.emails.send({

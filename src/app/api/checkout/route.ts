@@ -163,7 +163,8 @@ async function handleCheckout(request: Request) {
   // servidor: el intercambio de código PKCE necesita que el verificador
   // quede guardado en el mismo navegador que después abre el link del mail.
 
-  await enviarPasesPorEmail(body.email, `${producto.nombre} ${producto.variante}`, pases);
+  const origin = new URL(request.url).origin;
+  await enviarPasesPorEmail(body.email, `${producto.nombre} ${producto.variante}`, pases, origin);
 
   return NextResponse.json({
     ok: true,
