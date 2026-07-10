@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient as createPublicClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { generarCodigoAlfanumerico } from "@/lib/checkout/codigo-alfanumerico";
 
@@ -159,17 +158,9 @@ async function handleCheckout(request: Request) {
     await admin.from("cupones").update({ usos_actuales: cuponUsosActuales + 1 }).eq("id", cuponId);
   }
 
-  // Dispara el magic link para que pueda entrar a "Mi FabPass" sin contraseña.
-  const publico = createPublicClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    { auth: { flowType: "pkce" } },
-  );
-  const origin = new URL(request.url).origin;
-  await publico.auth.signInWithOtp({
-    email: body.email,
-    options: { emailRedirectTo: `${origin}/auth/callback` },
-  });
+  // El magic link lo dispara el cliente (ver carrito/page.tsx), no el
+  // servidor: el intercambio de código PKCE necesita que el verificador
+  // quede guardado en el mismo navegador que después abre el link del mail.
 
   return NextResponse.json({
     ok: true,

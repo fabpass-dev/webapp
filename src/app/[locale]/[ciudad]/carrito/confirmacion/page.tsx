@@ -1,15 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { enviarMagicLink } from "@/lib/checkout/enviar-magic-link";
+import { PedirMagicLink } from "@/components/PedirMagicLink";
 
 type Confirmacion = {
   transaccion_id: string;
+  email: string;
   pases: { id: string; codigo_alfanumerico: string; titular_nombre: string; titular_apellido: string }[];
 };
 
 export default function ConfirmacionPage() {
   const [datos, setDatos] = useState<Confirmacion | null>(null);
   const [noEncontrado, setNoEncontrado] = useState(false);
+  const [reenviado, setReenviado] = useState(false);
 
   useEffect(() => {
     const guardado = sessionStorage.getItem("fabpass_confirmacion");
@@ -24,8 +28,8 @@ export default function ConfirmacionPage() {
     return (
       <main className="p-8 max-w-xl mx-auto flex flex-col gap-4">
         <h1 className="text-2xl font-bold">¿No recibiste el detalle de tu compra?</h1>
-        <p>Revisá tu email — ahí te llegó un link para entrar a &quot;Mi FabPass&quot; sin contraseña.</p>
-        <button className="rounded border px-4 py-2 self-start">No recibí mi pase</button>
+        <p>Ingresá el email con el que compraste y te mandamos de nuevo el link de acceso.</p>
+        <PedirMagicLink />
       </main>
     );
   }
@@ -46,7 +50,15 @@ export default function ConfirmacionPage() {
           </li>
         ))}
       </ul>
-      <button className="rounded border px-4 py-2 self-start">No recibí mi pase</button>
+      <button
+        className="rounded border px-4 py-2 self-start"
+        onClick={async () => {
+          await enviarMagicLink(datos.email);
+          setReenviado(true);
+        }}
+      >
+        {reenviado ? "Reenviado ✓" : "No recibí mi pase"}
+      </button>
     </main>
   );
 }

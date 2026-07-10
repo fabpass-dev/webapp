@@ -1,6 +1,7 @@
 import QRCode from "qrcode";
 import { createClient } from "@/lib/supabase/server";
 import { PedirMagicLink } from "@/components/PedirMagicLink";
+import { ImprimirBoton } from "@/components/ImprimirBoton";
 
 export default async function MiPasePage() {
   const supabase = await createClient();
@@ -38,7 +39,7 @@ export default async function MiPasePage() {
         <div key={p.id} className="border rounded p-4 flex gap-4 items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={p.qrDataUrl} alt="Código QR del pase" width={110} height={110} />
-          <div>
+          <div className="flex flex-col gap-1">
             <p className="font-semibold">
               {p.titular_nombre} {p.titular_apellido}
             </p>
@@ -47,6 +48,16 @@ export default async function MiPasePage() {
               {(p.productos as unknown as { nombre: string; variante: string } | null)?.variante}
             </p>
             <p className="text-sm">Estado: {p.estado}</p>
+            <div className="flex gap-3 mt-1 print:hidden">
+              <a
+                href={p.qrDataUrl}
+                download={`fabpass-${p.titular_nombre}-${p.titular_apellido}.png`}
+                className="text-sm underline"
+              >
+                Descargar
+              </a>
+              <ImprimirBoton />
+            </div>
           </div>
         </div>
       ))}

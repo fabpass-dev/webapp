@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { enviarMagicLink } from "@/lib/checkout/enviar-magic-link";
 
 type Producto = {
   id: string;
@@ -80,7 +81,8 @@ export default function CarritoPage() {
         setEnviando(false);
         return;
       }
-      sessionStorage.setItem("fabpass_confirmacion", JSON.stringify(data));
+      await enviarMagicLink(email);
+      sessionStorage.setItem("fabpass_confirmacion", JSON.stringify({ ...data, email }));
       router.push(`/${locale}/${ciudad}/carrito/confirmacion`);
     } catch {
       setError("error_de_red");

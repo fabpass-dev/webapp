@@ -1,17 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { enviarMagicLink } from "@/lib/checkout/enviar-magic-link";
 
 export function PedirMagicLink() {
   const [email, setEmail] = useState("");
   const [enviado, setEnviado] = useState(false);
 
   async function enviar() {
-    await createClient().auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
-    });
+    await enviarMagicLink(email);
     setEnviado(true);
   }
 
