@@ -9,6 +9,17 @@ type PaseParaEmail = {
   titular_apellido: string;
 };
 
+// Nombre/apellido los escribe el comprador — nunca insertarlos crudos en un
+// template de HTML sin escapar.
+function escaparHtml(texto: string): string {
+  return texto
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // Remitente de prueba de Resend hasta que se verifique un dominio propio
 // (ver memoria del proyecto: se va a migrar a mail.thefabpass.com).
 const REMITENTE = "FabPass <onboarding@resend.dev>";
@@ -40,8 +51,8 @@ export async function enviarPasesPorEmail(
       const qrUrl = `${origin}/api/qr?data=${encodeURIComponent(`${p.codigo_qr}.${p.qr_firma}`)}`;
       return `
         <div style="margin-bottom:24px;padding:16px;border:1px solid #ddd;border-radius:8px;">
-          <p style="margin:0 0 8px;font-weight:bold;">${p.titular_nombre} ${p.titular_apellido}</p>
-          <p style="margin:0 0 8px;color:#666;font-size:14px;">${nombreProducto} — Código: ${p.codigo_alfanumerico}</p>
+          <p style="margin:0 0 8px;font-weight:bold;">${escaparHtml(p.titular_nombre)} ${escaparHtml(p.titular_apellido)}</p>
+          <p style="margin:0 0 8px;color:#666;font-size:14px;">${escaparHtml(nombreProducto)} — Código: ${escaparHtml(p.codigo_alfanumerico)}</p>
           <img src="${qrUrl}" width="220" height="220" alt="Código QR" />
         </div>
       `;

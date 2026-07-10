@@ -39,9 +39,15 @@ async function handleCheckout(request: Request) {
   if (!Array.isArray(body.titulares) || body.titulares.length === 0) {
     return NextResponse.json({ ok: false, error: "faltan_titulares" }, { status: 400 });
   }
+  if (body.titulares.length > 10) {
+    return NextResponse.json({ ok: false, error: "demasiados_titulares" }, { status: 400 });
+  }
   for (const t of body.titulares) {
     if (!t.nombre?.trim() || !t.apellido?.trim()) {
       return NextResponse.json({ ok: false, error: "titular_incompleto" }, { status: 400 });
+    }
+    if (t.nombre.trim().length > 80 || t.apellido.trim().length > 80) {
+      return NextResponse.json({ ok: false, error: "titular_invalido" }, { status: 400 });
     }
   }
 
