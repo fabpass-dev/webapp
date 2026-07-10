@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { enviarMagicLink } from "@/lib/checkout/enviar-magic-link";
 
-export function PedirMagicLink() {
+export function PedirMagicLink({ next }: { next?: string } = {}) {
   const [email, setEmail] = useState("");
   const [enviado, setEnviado] = useState(false);
 
   async function enviar() {
-    await enviarMagicLink(email);
+    await enviarMagicLink(email, next);
     setEnviado(true);
   }
 

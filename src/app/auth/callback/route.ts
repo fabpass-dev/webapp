@@ -11,5 +11,10 @@ export async function GET(request: Request) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  return NextResponse.redirect(`${origin}/es/pass`);
+  // Solo se permite un destino relativo propio (nunca una URL externa), para
+  // no convertir esto en un open redirect.
+  const next = searchParams.get("next");
+  const destino = next && next.startsWith("/") && !next.startsWith("//") ? next : "/es/pass";
+
+  return NextResponse.redirect(`${origin}${destino}`);
 }
