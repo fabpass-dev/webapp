@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { generarCodigoAlfanumerico } from "@/lib/checkout/codigo-alfanumerico";
+import { enviarPasesPorEmail } from "@/lib/email/enviar-pases-email";
 
 type Titular = { nombre: string; apellido: string; es_menor: boolean };
 
@@ -148,7 +149,7 @@ async function handleCheckout(request: Request) {
   const { data: pases, error: errorPases } = await admin
     .from("pases")
     .insert(nuevosPases)
-    .select("id, codigo_alfanumerico, titular_nombre, titular_apellido");
+    .select("id, codigo_qr, qr_firma, codigo_alfanumerico, titular_nombre, titular_apellido");
 
   if (errorPases || !pases) {
     return NextResponse.json({ ok: false, error: "no_se_pudieron_crear_pases" }, { status: 500 });
@@ -162,9 +163,16 @@ async function handleCheckout(request: Request) {
   // servidor: el intercambio de código PKCE necesita que el verificador
   // quede guardado en el mismo navegador que después abre el link del mail.
 
+  await enviarPasesPorEmail(body.email, `${producto.nombre} ${producto.variante}`, pases);
+
   return NextResponse.json({
     ok: true,
     transaccion_id: transaccion.id,
-    pases,
+    pases: pases.map(({ id, codigo_alfanumerico, titular_nombre, titular_apellido }) => ({
+      id,
+      codigo_alfanumerico,
+      titular_nombre,
+      titular_apellido,
+    })),
   });
 }
