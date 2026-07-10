@@ -22,13 +22,8 @@ function fechaLimiteActivacion(): string {
 export async function POST(request: Request) {
   try {
     return await handleCheckout(request);
-  } catch (e) {
-    // TEMPORAL: exponer el error real para diagnosticar el 500 en Cloudflare.
-    // Sacar este catch antes de mostrarle esto a un usuario real.
-    return NextResponse.json(
-      { ok: false, error: "excepcion", detalle: e instanceof Error ? e.message : String(e) },
-      { status: 500 },
-    );
+  } catch {
+    return NextResponse.json({ ok: false, error: "error_interno" }, { status: 500 });
   }
 }
 
