@@ -20,9 +20,7 @@ function escaparHtml(texto: string): string {
     .replace(/'/g, "&#39;");
 }
 
-// Remitente de prueba de Resend hasta que se verifique un dominio propio
-// (ver memoria del proyecto: se va a migrar a mail.thefabpass.com).
-const REMITENTE = "FabPass <onboarding@resend.dev>";
+const REMITENTE = "FabPass <no-reply@mail.thefabpass.com>";
 
 export async function enviarPasesPorEmail(
   email: string,
