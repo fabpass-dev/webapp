@@ -2,6 +2,7 @@ import QRCode from "qrcode";
 import { createClient } from "@/lib/supabase/server";
 import { PedirMagicLink } from "@/components/PedirMagicLink";
 import { ImprimirBoton } from "@/components/ImprimirBoton";
+import { SolicitarReembolsoBoton } from "@/components/SolicitarReembolsoBoton";
 
 export default async function MiPasePage() {
   const supabase = await createClient();
@@ -58,6 +59,11 @@ export default async function MiPasePage() {
               </a>
               <ImprimirBoton />
             </div>
+            {(p.estado === "comprado" || p.estado === "activo") && (
+              <div className="print:hidden">
+                <SolicitarReembolsoBoton paseId={p.id} />
+              </div>
+            )}
           </div>
         </div>
       ))}

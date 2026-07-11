@@ -7,11 +7,21 @@ export function PedirMagicLink({ next }: { next?: string } = {}) {
   const [email, setEmail] = useState("");
   const [enviado, setEnviado] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function enviar() {
     setEnviando(true);
-    await enviarMagicLink(email, next);
-    setEnviado(true);
+    setError(null);
+    const mensajeError = await enviarMagicLink(email, next);
+    if (mensajeError) {
+      setError(
+        mensajeError.toLowerCase().includes("rate limit")
+          ? "Se alcanzó el límite de emails por hora. Probá de nuevo en un rato."
+          : mensajeError,
+      );
+    } else {
+      setEnviado(true);
+    }
     setEnviando(false);
   }
 
@@ -28,6 +38,7 @@ export function PedirMagicLink({ next }: { next?: string } = {}) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
+      {error && <p className="text-red-600 text-sm">{error}</p>}
       <button
         className="rounded bg-black text-white px-4 py-2 disabled:opacity-50"
         onClick={enviar}

@@ -47,6 +47,9 @@ export default async function AdminPage() {
         <Link className="underline" href="/admin/cupones">
           Gestionar cupones
         </Link>
+        <Link className="underline" href="/admin/liquidaciones">
+          Liquidaciones
+        </Link>
       </nav>
     </main>
   );
