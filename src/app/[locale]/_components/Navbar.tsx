@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ChevronDown, Globe, MapPin } from "lucide-react";
 import { SelectorDestinoModal } from "./SelectorDestinoModal";
 
 const IDIOMAS = [
@@ -46,16 +47,18 @@ export function Navbar({ locale, ciudades }: { locale: string; ciudades: { nombr
           />
         </Link>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="relative">
             <button
               onClick={() => setIdiomaAbierto((v) => !v)}
-              className="flex items-center gap-1 text-sm text-fabpass-cuerpo"
+              className="flex items-center gap-1.5 rounded-full border border-fabpass-celeste bg-white px-3 py-2 text-sm font-semibold text-fabpass-cuerpo shadow-sm"
             >
-              🌐 <span className="hidden sm:inline">{idiomaActivo.label}</span>
+              <Globe size={15} className="text-fabpass-azul" />
+              <span className="hidden sm:inline">{idiomaActivo.codigo.toUpperCase()}</span>
+              <ChevronDown size={14} className="text-fabpass-muted" />
             </button>
             {idiomaAbierto && (
-              <div className="absolute right-0 mt-2 w-40 rounded-lg border border-fabpass-celeste bg-white py-1 shadow-lg">
+              <div className="absolute right-0 mt-2 w-40 rounded-xl border border-fabpass-celeste bg-white py-1 shadow-lg">
                 {IDIOMAS.map((i) => (
                   <button
                     key={i.codigo}
@@ -71,8 +74,9 @@ export function Navbar({ locale, ciudades }: { locale: string; ciudades: { nombr
 
           <button
             onClick={() => setModalAbierto(true)}
-            className="rounded-full bg-fabpass-azul px-4 py-2 text-sm font-semibold text-white sm:px-5"
+            className="flex items-center gap-1.5 rounded-full bg-fabpass-azul px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-fabpass-azul/30 transition-transform hover:scale-[1.02] sm:px-5"
           >
+            <MapPin size={15} />
             Elige tu destino
           </button>
         </div>
