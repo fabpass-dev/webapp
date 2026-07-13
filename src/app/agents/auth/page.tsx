@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function PartnersAuthPage() {
+export default function AgentsAuthPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,21 +29,21 @@ export default function PartnersAuthPage() {
       .maybeSingle();
     const tipo = (empleado?.partners as unknown as { tipo: string } | null)?.tipo;
 
-    if (tipo !== "atraccion") {
+    if (tipo === "atraccion") {
       await supabase.auth.signOut();
-      setError("Este login es solo para atracciones. Si vendés pases (hotel, agencia, etc.), entrá en /agents/auth.");
+      setError("Este login es solo para quienes venden pases (hotel, agencia, etc.). Las atracciones entran en /partners/auth.");
       setEnviando(false);
       return;
     }
 
-    router.push("/partners/validar");
+    router.push("/agents");
     router.refresh();
   }
 
   return (
     <main className="p-8 max-w-sm mx-auto flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Login Partners</h1>
-      <p className="text-sm text-gray-500">Para atracciones que escanean y validan pases.</p>
+      <h1 className="text-2xl font-bold">Login Agents</h1>
+      <p className="text-sm text-gray-500">Para hoteles, agencias y cualquiera que venda pases FabPass.</p>
       <input
         type="email"
         placeholder="Email"
