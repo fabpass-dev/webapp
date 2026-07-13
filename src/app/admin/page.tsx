@@ -41,6 +41,12 @@ export default async function AdminPage() {
       </div>
 
       <nav className="flex flex-col gap-2">
+        <Link className="underline" href="/admin/ciudades">
+          Gestionar ciudades
+        </Link>
+        <Link className="underline" href="/admin/productos">
+          Gestionar productos
+        </Link>
         <Link className="underline" href="/admin/atracciones">
           Gestionar atracciones
         </Link>

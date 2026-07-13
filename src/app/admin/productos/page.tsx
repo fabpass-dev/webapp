@@ -2,26 +2,26 @@ import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAdminUser } from "@/lib/admin/require-admin";
 import { PedirMagicLink } from "@/components/PedirMagicLink";
-import { NuevaAtraccionForm } from "@/components/admin/NuevaAtraccionForm";
+import { NuevoProductoForm } from "@/components/admin/NuevoProductoForm";
 import { ToggleActivoBoton } from "@/components/admin/ToggleActivoBoton";
 
-export default async function AdminAtraccionesPage() {
+export default async function AdminProductosPage() {
   const user = await getAdminUser();
 
   if (!user) {
     return (
       <main className="p-8 max-w-sm mx-auto flex flex-col gap-4">
         <h1 className="text-2xl font-bold">Admin FabPass</h1>
-        <PedirMagicLink next="/admin/atracciones" />
+        <PedirMagicLink next="/admin/productos" />
       </main>
     );
   }
 
   const admin = createAdminClient();
-  const [{ data: atracciones }, { data: ciudades }] = await Promise.all([
+  const [{ data: productos }, { data: ciudades }] = await Promise.all([
     admin
-      .from("atracciones")
-      .select("id, nombre, categoria, precio_mayor, comision_pct_default, activa")
+      .from("productos")
+      .select("id, nombre, variante, tipo, precio_usd, validez_dias, activo, ciudades(nombre)")
       .order("nombre"),
     admin.from("ciudades").select("id, nombre").order("nombre"),
   ]);
@@ -31,31 +31,35 @@ export default async function AdminAtraccionesPage() {
       <Link href="/admin" className="text-sm underline">
         ← Volver
       </Link>
-      <h1 className="text-2xl font-bold">Atracciones ({atracciones?.length ?? 0})</h1>
+      <h1 className="text-2xl font-bold">Productos ({productos?.length ?? 0})</h1>
 
-      <NuevaAtraccionForm ciudades={ciudades ?? []} />
+      <NuevoProductoForm ciudades={ciudades ?? []} />
 
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="text-left border-b">
             <th className="py-1">Nombre</th>
-            <th>Categoría</th>
+            <th>Ciudad</th>
+            <th>Tipo</th>
             <th>Precio USD</th>
-            <th>% Comisión</th>
+            <th>Validez</th>
             <th>Visible en la web</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {atracciones?.map((a) => (
-            <tr key={a.id} className="border-b">
-              <td className="py-1">{a.nombre}</td>
-              <td>{a.categoria}</td>
-              <td>{a.precio_mayor}</td>
-              <td>{a.comision_pct_default}%</td>
-              <td>{a.activa ? "Sí" : "No"}</td>
+          {productos?.map((p) => (
+            <tr key={p.id} className="border-b">
+              <td className="py-1">
+                {p.nombre} — {p.variante}
+              </td>
+              <td>{(p.ciudades as unknown as { nombre: string } | null)?.nombre}</td>
+              <td>{p.tipo}</td>
+              <td>{p.precio_usd}</td>
+              <td>{p.validez_dias}d</td>
+              <td>{p.activo ? "Sí" : "No"}</td>
               <td>
-                <ToggleActivoBoton endpoint={`/api/admin/atracciones/${a.id}/toggle`} activo={a.activa} />
+                <ToggleActivoBoton endpoint={`/api/admin/productos/${p.id}/toggle`} activo={p.activo} />
               </td>
             </tr>
           ))}
