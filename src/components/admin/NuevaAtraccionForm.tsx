@@ -8,7 +8,7 @@ type Ciudad = { id: string; nombre: string };
 export function NuevaAtraccionForm({ ciudades }: { ciudades: Ciudad[] }) {
   const router = useRouter();
   const [nombre, setNombre] = useState("");
-  const [categoria, setCategoria] = useState("");
+  const [categorias, setCategorias] = useState("");
   const [ciudadId, setCiudadId] = useState(ciudades[0]?.id ?? "");
   const [precioMayor, setPrecioMayor] = useState("");
   const [comisionPct, setComisionPct] = useState("50");
@@ -23,7 +23,7 @@ export function NuevaAtraccionForm({ ciudades }: { ciudades: Ciudad[] }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         nombre,
-        categoria,
+        categorias,
         ciudad_id: ciudadId,
         precio_mayor: Number(precioMayor),
         comision_pct_default: Number(comisionPct),
@@ -36,7 +36,7 @@ export function NuevaAtraccionForm({ ciudades }: { ciudades: Ciudad[] }) {
       return;
     }
     setNombre("");
-    setCategoria("");
+    setCategorias("");
     setPrecioMayor("");
     setEnviando(false);
     router.refresh();
@@ -53,9 +53,9 @@ export function NuevaAtraccionForm({ ciudades }: { ciudades: Ciudad[] }) {
       />
       <input
         className="border rounded px-2 py-1"
-        placeholder="Categoría"
-        value={categoria}
-        onChange={(e) => setCategoria(e.target.value)}
+        placeholder="Categorías (separadas por coma)"
+        value={categorias}
+        onChange={(e) => setCategorias(e.target.value)}
       />
       <select className="border rounded px-2 py-1" value={ciudadId} onChange={(e) => setCiudadId(e.target.value)}>
         {ciudades.map((c) => (

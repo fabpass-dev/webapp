@@ -21,7 +21,7 @@ export default async function AdminAtraccionesPage() {
   const [{ data: atracciones }, { data: ciudades }] = await Promise.all([
     admin
       .from("atracciones")
-      .select("id, nombre, categoria, precio_mayor, comision_pct_default, activa")
+      .select("id, nombre, categorias, precio_mayor, comision_pct_default, activa")
       .order("nombre"),
     admin.from("ciudades").select("id, nombre").order("nombre"),
   ]);
@@ -50,7 +50,7 @@ export default async function AdminAtraccionesPage() {
           {atracciones?.map((a) => (
             <tr key={a.id} className="border-b">
               <td className="py-1">{a.nombre}</td>
-              <td>{a.categoria}</td>
+              <td>{(a.categorias as string[] | null)?.join(", ")}</td>
               <td>{a.precio_mayor}</td>
               <td>{a.comision_pct_default}%</td>
               <td>{a.activa ? "Sí" : "No"}</td>

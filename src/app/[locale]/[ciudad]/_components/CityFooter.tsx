@@ -1,38 +1,54 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export function Footer({ locale }: { locale: string }) {
+export function CityFooter({ locale, ciudad }: { locale: string; ciudad: string }) {
+  const base = `/${locale}/${ciudad}`;
+
   return (
     <footer className="bg-fabpass-profundo px-4 py-12 text-[#CCCCCC] sm:px-6">
       <div className="mx-auto max-w-5xl">
         <Image src="/logo-fabpass-transparente.png" alt="FabPass" width={110} height={35} className="mb-8" />
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-4">
           <div>
-            <h3 className="mb-3 font-bold text-white">Producto</h3>
+            <h3 className="mb-3 font-bold text-white">Destinos</h3>
             <ul className="flex flex-col gap-2 text-sm">
               <li>
-                <Link href={`/${locale}/buenos-aires`}>Destinos (Buenos Aires)</Link>
+                <Link href={base}>Buenos Aires</Link>
+              </li>
+              <li>Próximamente más ciudades</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="mb-3 font-bold text-white">FabPass</h3>
+            <ul className="flex flex-col gap-2 text-sm">
+              <li>
+                <Link href={`${base}/como-funciona`}>Cómo funciona</Link>
               </li>
               <li>
-                <Link href={`/${locale}/como-funciona`}>Cómo funciona</Link>
+                <Link href={`${base}/productos`}>Nuestros pases</Link>
               </li>
               <li>
-                <Link href={`/${locale}/buenos-aires/beneficios`}>Beneficios y experiencias</Link>
+                <Link href={`${base}/beneficios`}>FabBenefits</Link>
               </li>
-              <li>FabPass App</li>
+              <li>
+                <Link href={`${base}/premium`}>FabBlack</Link>
+              </li>
+              <li>
+                <Link href={`${base}/faqs`}>Preguntas frecuentes</Link>
+              </li>
             </ul>
           </div>
           <div>
             <h3 className="mb-3 font-bold text-white">Ayuda</h3>
             <ul className="flex flex-col gap-2 text-sm">
               <li>
-                <Link href={`/${locale}/faqs`}>Preguntas frecuentes</Link>
-              </li>
-              <li>
                 <Link href={`/${locale}/contacto`}>Contacto</Link>
               </li>
               <li>
                 <Link href={`/${locale}/soporte`}>Soporte al viajero</Link>
+              </li>
+              <li>
+                <Link href={`/${locale}/terminos`}>Política de cancelación</Link>
               </li>
               <li>Instagram · TikTok · LinkedIn</li>
             </ul>

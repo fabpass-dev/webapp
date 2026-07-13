@@ -9,16 +9,30 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { nombre, categoria, ciudad_id, precio_mayor, comision_pct_default } = body ?? {};
+  const { nombre, categorias, ciudad_id, precio_mayor, comision_pct_default } = body ?? {};
 
   if (!nombre || !ciudad_id || typeof precio_mayor !== "number" || precio_mayor < 0) {
     return NextResponse.json({ ok: false, error: "datos_invalidos" }, { status: 400 });
   }
 
+  const slug = String(nombre)
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+
   const admin = createAdminClient();
   const { error } = await admin.from("atracciones").insert({
     nombre: String(nombre).trim(),
-    categoria: categoria ? String(categoria).trim() : null,
+    slug,
+    categorias: categorias
+      ? String(categorias)
+          .split(",")
+          .map((c: string) => c.trim())
+          .filter(Boolean)
+      : [],
     ciudad_id,
     precio_mayor,
     comision_pct_default: typeof comision_pct_default === "number" ? comision_pct_default : 0,
