@@ -23,8 +23,8 @@ export default async function AgentsPage() {
   }
 
   const { data: empleado } = await supabase
-    .from("empleados")
-    .select("id, nombre, activo, partners(nombre, tipo, codigo_partner)")
+    .from("agents_empleados")
+    .select("id, nombre, activo, agents(nombre, tipo, codigo_agent)")
     .eq("auth_user_id", user.id)
     .maybeSingle();
 
@@ -37,13 +37,13 @@ export default async function AgentsPage() {
     );
   }
 
-  const partner = empleado.partners as unknown as { nombre: string; tipo: string; codigo_partner: string } | null;
+  const agent = empleado.agents as unknown as { nombre: string; tipo: string; codigo_agent: string } | null;
 
   return (
     <main className="p-8 max-w-sm mx-auto flex flex-col gap-4">
       <h1 className="text-2xl font-bold">Hola, {empleado.nombre}</h1>
       <p className="text-sm text-gray-500">
-        {partner?.nombre} · código {partner?.codigo_partner}
+        {agent?.nombre} · código {agent?.codigo_agent}
       </p>
       <p className="text-sm text-gray-500">El panel de ventas y comisiones todavía se está construyendo.</p>
     </main>

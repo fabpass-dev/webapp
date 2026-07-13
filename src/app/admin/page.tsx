@@ -17,15 +17,23 @@ export default async function AdminPage() {
   }
 
   const admin = createAdminClient();
-  const [{ count: ciudades }, { count: productos }, { count: atracciones }, { count: partners }, { count: pases }, { count: cupones }] =
-    await Promise.all([
-      admin.from("ciudades").select("*", { count: "exact", head: true }),
-      admin.from("productos").select("*", { count: "exact", head: true }),
-      admin.from("atracciones").select("*", { count: "exact", head: true }),
-      admin.from("partners").select("*", { count: "exact", head: true }),
-      admin.from("pases").select("*", { count: "exact", head: true }),
-      admin.from("cupones").select("*", { count: "exact", head: true }),
-    ]);
+  const [
+    { count: ciudades },
+    { count: productos },
+    { count: atracciones },
+    { count: partners },
+    { count: agents },
+    { count: pases },
+    { count: cupones },
+  ] = await Promise.all([
+    admin.from("ciudades").select("*", { count: "exact", head: true }),
+    admin.from("productos").select("*", { count: "exact", head: true }),
+    admin.from("atracciones").select("*", { count: "exact", head: true }),
+    admin.from("partners").select("*", { count: "exact", head: true }),
+    admin.from("agents").select("*", { count: "exact", head: true }),
+    admin.from("pases").select("*", { count: "exact", head: true }),
+    admin.from("cupones").select("*", { count: "exact", head: true }),
+  ]);
 
   return (
     <main className="p-8 max-w-xl mx-auto flex flex-col gap-6">
@@ -36,6 +44,7 @@ export default async function AdminPage() {
         <Stat label="Productos" value={productos} />
         <Stat label="Atracciones" value={atracciones} />
         <Stat label="Partners" value={partners} />
+        <Stat label="Agents" value={agents} />
         <Stat label="Pases vendidos" value={pases} />
         <Stat label="Cupones" value={cupones} />
       </div>

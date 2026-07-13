@@ -24,12 +24,11 @@ export default function PartnersAuthPage() {
 
     const { data: empleado } = await supabase
       .from("empleados")
-      .select("partners(tipo)")
+      .select("id")
       .eq("auth_user_id", data.user.id)
       .maybeSingle();
-    const tipo = (empleado?.partners as unknown as { tipo: string } | null)?.tipo;
 
-    if (tipo !== "atraccion") {
+    if (!empleado) {
       await supabase.auth.signOut();
       setError("Este login es solo para atracciones. Si vendés pases (hotel, agencia, etc.), entrá en /agents/auth.");
       setEnviando(false);

@@ -23,13 +23,12 @@ export default function AgentsAuthPage() {
     }
 
     const { data: empleado } = await supabase
-      .from("empleados")
-      .select("partners(tipo)")
+      .from("agents_empleados")
+      .select("id")
       .eq("auth_user_id", data.user.id)
       .maybeSingle();
-    const tipo = (empleado?.partners as unknown as { tipo: string } | null)?.tipo;
 
-    if (tipo === "atraccion") {
+    if (!empleado) {
       await supabase.auth.signOut();
       setError("Este login es solo para quienes venden pases (hotel, agencia, etc.). Las atracciones entran en /partners/auth.");
       setEnviando(false);
