@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { X } from "lucide-react";
 import type { AtraccionPlanificador, ConfigViaje } from "./tipos";
 import { formatVariante, recomendarPase, type ProductoVariante } from "@/lib/planificador/recomendar-pase";
+import { diasNecesarios } from "@/lib/planificador/generar-itinerario";
 
 const CATEGORIAS_TODAS = "Todas";
 
@@ -54,9 +55,13 @@ export function Paso2Seleccion({
 
   const listaSeleccionadas = atracciones.filter((a) => seleccionadas.has(a.id));
   const pagas = listaSeleccionadas.filter((a) => !a.gratuito);
+  const gratuitas = listaSeleccionadas.filter((a) => a.gratuito);
   const precioSinPase = pagas.reduce((s, a) => s + a.precio_mayor, 0);
+  // Mismo cálculo de días que se usa al generar el itinerario final, para que
+  // esta vista previa nunca contradiga el resultado de la Paso 3.
+  const diasReales = diasNecesarios(pagas.length, gratuitas.length > 0, config.ritmo);
   const recomendacionCompleta =
-    pagas.length >= 2 ? recomendarPase(productos, config.diasTurismo, pagas.length, precioSinPase) : null;
+    pagas.length >= 2 ? recomendarPase(productos, diasReales, pagas.length, precioSinPase) : null;
   // Si ni la variante más grande de ninguno de los dos pases cubre lo elegido,
   // no hay nada real para recomendar todavía.
   const recomendacion =
@@ -133,7 +138,7 @@ export function Paso2Seleccion({
         <div className="rounded-2xl border border-fabpass-celeste bg-white p-4">
           <p className="text-[13px] font-bold text-fabpass-titulo">Tu selección</p>
           <p className="mt-2 text-sm text-fabpass-cuerpo">{listaSeleccionadas.length} atracciones elegidas</p>
-          <p className="text-sm text-fabpass-cuerpo">{config.diasTurismo} días de turismo</p>
+          <p className="text-sm text-fabpass-cuerpo">{diasReales || config.diasTurismo} días necesarios</p>
           <p className="mt-1 text-sm font-semibold text-fabpass-titulo">Precio sin pase: USD {precioSinPase}</p>
 
           {recomendacion && (
@@ -145,6 +150,12 @@ export function Paso2Seleccion({
                   ? `FabDays ${formatVariante(recomendacion.fabdays?.variante ?? "")} · USD ${recomendacion.fabdays?.precio}/persona`
                   : `FabFlex ${formatVariante(recomendacion.fabflex?.variante ?? "")} · USD ${recomendacion.fabflex?.precio}/persona`}
               </p>
+              {recomendacion.recomendado === "fabdays" && (
+                <p className="mt-1 text-[11px] text-fabpass-cuerpo">
+                  FabDays no tiene límite de atracciones — sumá todas las que quieras en tus{" "}
+                  {formatVariante(recomendacion.fabdays?.variante ?? "")}, sin costo extra.
+                </p>
+              )}
             </div>
           )}
 

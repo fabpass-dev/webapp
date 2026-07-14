@@ -5,7 +5,7 @@ import { Paso1Configuracion } from "./Paso1Configuracion";
 import { Paso2Seleccion } from "./Paso2Seleccion";
 import { Paso3Itinerario } from "./Paso3Itinerario";
 import type { AtraccionPlanificador, ConfigViaje } from "./tipos";
-import { generarItinerario, type DiaItinerario } from "@/lib/planificador/generar-itinerario";
+import { diasNecesarios, generarItinerario, type DiaItinerario } from "@/lib/planificador/generar-itinerario";
 import { recomendarPase, type ProductoVariante, type Recomendacion } from "@/lib/planificador/recomendar-pase";
 
 const PASOS = ["Configuración", "Atracciones", "Itinerario"];
@@ -36,8 +36,12 @@ export function PlanificadorWizard({
     setDias(generarItinerario(elegidas, config.ritmo, config.fechaInicio || null));
 
     const pagas = elegidas.filter((a) => !a.gratuito);
+    const gratuitas = elegidas.filter((a) => a.gratuito);
     const precioSinPase = pagas.reduce((s, a) => s + a.precio_mayor, 0);
-    setRecomendacion(recomendarPase(productos, config.diasTurismo, pagas.length, precioSinPase));
+    // Los días que realmente necesita el itinerario mandan sobre lo elegido
+    // en el Paso 1 — eso era solo una intención inicial.
+    const dias = diasNecesarios(pagas.length, gratuitas.length > 0, config.ritmo);
+    setRecomendacion(recomendarPase(productos, dias, pagas.length, precioSinPase));
     setPaso(2);
   }
 

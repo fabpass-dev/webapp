@@ -30,7 +30,10 @@ export function CarruselImperdibles({ atracciones, base }: { atracciones: Atracc
             </button>
           </div>
         </div>
-        <div ref={ref} className="mt-4 flex gap-3 overflow-x-auto pb-2">
+        <div
+          ref={ref}
+          className="mt-4 flex gap-3 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
           {atracciones.map((a) => (
             <div key={a.slug} className="w-[180px] shrink-0">
               <AtraccionCard atraccion={a} base={base} />

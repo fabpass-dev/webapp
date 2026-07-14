@@ -76,6 +76,17 @@ function sumarHora(horaHHMM: string, minutos: number): string {
   return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
 }
 
+// Cuántos días necesita REALMENTE el itinerario según lo elegido — puede no
+// coincidir con los "días de turismo" del Paso 1 (eso era solo una intención
+// inicial; una vez que se elige más o menos de lo que entra en esos días, el
+// itinerario real manda). Se usa tanto para generar el resultado final como
+// para que la recomendación de pase en el Paso 2 ya sea consistente con eso.
+export function diasNecesarios(cantidadPagas: number, hayGratuitas: boolean, ritmo: "tranquilo" | "moderado" | "intenso"): number {
+  const maxPorDia = MAX_PAGAS_POR_DIA[ritmo] ?? 3;
+  if (cantidadPagas === 0) return hayGratuitas ? 1 : 0;
+  return Math.ceil(cantidadPagas / maxPorDia);
+}
+
 export function generarItinerario(
   seleccionadas: AtraccionPlan[],
   ritmo: "tranquilo" | "moderado" | "intenso",

@@ -156,6 +156,9 @@ export function Paso3Itinerario({
                   </p>
                   <p className="text-lg font-bold text-fabpass-azul">USD {info.precio} / persona</p>
                   <p className="text-sm font-semibold text-fabpass-exito">Ahorro por persona: USD {recomendacion.ahorro.toFixed(0)}</p>
+                  {tipo === "fabdays" && (
+                    <p className="mt-1 text-[11px] text-fabpass-cuerpo">Sin límite de atracciones durante esos días.</p>
+                  )}
                 </div>
               );
             })}
