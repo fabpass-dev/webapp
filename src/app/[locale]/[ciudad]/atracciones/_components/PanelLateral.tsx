@@ -53,7 +53,7 @@ export function PanelLateral({ base, precioDays, precioFlex }: { base: string; p
 
   return (
     <>
-      <aside className="hidden lg:sticky lg:top-40 lg:block lg:w-full">{contenido}</aside>
+      <aside className="hidden lg:sticky lg:top-24 lg:block lg:w-full lg:self-start">{contenido}</aside>
 
       <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between border-t border-fabpass-celeste bg-white px-4 py-3 lg:hidden">
         <p className="text-sm text-fabpass-cuerpo">Desde USD {precioDays}/persona</p>

@@ -55,20 +55,24 @@ export function Paso2Seleccion({
   const listaSeleccionadas = atracciones.filter((a) => seleccionadas.has(a.id));
   const pagas = listaSeleccionadas.filter((a) => !a.gratuito);
   const precioSinPase = pagas.reduce((s, a) => s + a.precio_mayor, 0);
-  const recomendacion =
+  const recomendacionCompleta =
     pagas.length >= 2 ? recomendarPase(productos, config.diasTurismo, pagas.length, precioSinPase) : null;
+  // Si ni la variante más grande de ninguno de los dos pases cubre lo elegido,
+  // no hay nada real para recomendar todavía.
+  const recomendacion =
+    recomendacionCompleta && (recomendacionCompleta.fabdays || recomendacionCompleta.fabflex) ? recomendacionCompleta : null;
 
   const atraccionDrawer = atracciones.find((a) => a.id === drawerId) ?? null;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 lg:grid lg:grid-cols-[1fr_340px] lg:gap-8">
-      <div>
-        <div className="flex gap-2 overflow-x-auto pb-3">
+      <div className="min-w-0">
+        <div className="flex flex-wrap gap-2 pb-3">
           {categoriasDisponibles.map((c) => (
             <button
               key={c}
               onClick={() => toggleCategoria(c)}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap ${
                 categoriasFiltro.includes(c) ? "bg-fabpass-azul text-white" : "border border-fabpass-celeste text-fabpass-cuerpo"
               }`}
             >
@@ -81,18 +85,19 @@ export function Paso2Seleccion({
           {filtradas.map((a) => {
             const elegida = seleccionadas.has(a.id);
             return (
-              <div
+              <button
                 key={a.id}
-                className={`overflow-hidden rounded-xl border border-fabpass-celeste bg-white shadow-sm ${elegida ? "opacity-50" : ""}`}
+                onClick={() => setDrawerId(a.id)}
+                className={`overflow-hidden rounded-xl border border-fabpass-celeste bg-white text-left shadow-sm ${elegida ? "opacity-50" : ""}`}
               >
                 <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-fabpass-azul to-fabpass-medio">
                   <span className="text-xl font-bold text-white/30">{a.nombre.slice(0, 1)}</span>
                 </div>
                 <div className="p-3">
-                  <button onClick={() => setDrawerId(a.id)} className="text-left text-[13px] font-bold text-fabpass-azul">
+                  <p className="text-[13px] font-bold text-fabpass-azul">
                     {elegida ? "✓ " : ""}
                     {a.nombre}
-                  </button>
+                  </p>
                   <p className="text-[11px] text-fabpass-muted">{a.categorias[0]}</p>
                   {a.gratuito ? (
                     <p className="mt-1 inline-block rounded bg-fabpass-exito/15 px-1.5 py-0.5 text-[10px] font-bold text-fabpass-exito">
@@ -105,16 +110,20 @@ export function Paso2Seleccion({
                     {elegida ? (
                       <span className="text-xs font-bold text-fabpass-exito">✓ Agregada</span>
                     ) : (
-                      <button
-                        onClick={() => toggleSeleccion(a.id)}
+                      <span
+                        role="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSeleccion(a.id);
+                        }}
                         className="flex h-7 w-7 items-center justify-center rounded-full bg-fabpass-azul text-white"
                       >
                         +
-                      </button>
+                      </span>
                     )}
                   </div>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -129,7 +138,7 @@ export function Paso2Seleccion({
 
           {recomendacion && (
             <div className="mt-3 rounded-xl bg-[#E1F5EE] p-3">
-              <p className="text-[11px] text-fabpass-cuerpo">Ahorro estimado con FabPass</p>
+              <p className="text-[11px] text-fabpass-cuerpo">Ahorro estimado con FabPass (por persona)</p>
               <p className="text-lg font-bold text-[#0F6E56]">USD {recomendacion.ahorro.toFixed(0)}</p>
               <p className="mt-1 text-xs text-fabpass-cuerpo">
                 {recomendacion.recomendado === "fabdays"
@@ -144,8 +153,8 @@ export function Paso2Seleccion({
               {listaSeleccionadas.map((a) => (
                 <div key={a.id} className="flex items-center justify-between text-xs">
                   <span className="truncate">{a.nombre}</span>
-                  <button onClick={() => toggleSeleccion(a.id)} className="text-fabpass-rosa">
-                    −
+                  <button onClick={() => toggleSeleccion(a.id)} className="shrink-0 font-semibold text-fabpass-muted hover:text-fabpass-rosa">
+                    Quitar
                   </button>
                 </div>
               ))}

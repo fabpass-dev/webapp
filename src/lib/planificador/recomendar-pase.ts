@@ -32,11 +32,12 @@ export function recomendarPase(
     .filter((p) => p.tipo === "fabflex")
     .sort((a, b) => a.precio_usd - b.precio_usd);
 
+  // Si ni la variante más grande alcanza a cubrir lo pedido, ese pase no es una
+  // opción real — antes se ofrecía igual (con la variante más grande) como si
+  // cubriera, lo cual mostraba un pase que en los hechos no alcanza.
   const variantePorDias = (v: string) => parseInt(v, 10) || 999;
-  const varianteFabdays =
-    dias.find((p) => variantePorDias(p.variante) >= diasTurismo) ?? dias[dias.length - 1] ?? null;
-  const varianteFabflex =
-    flex.find((p) => (p.max_atracciones_total ?? 999) >= cantidadPagas) ?? flex[flex.length - 1] ?? null;
+  const varianteFabdays = dias.find((p) => variantePorDias(p.variante) >= diasTurismo) ?? null;
+  const varianteFabflex = flex.find((p) => (p.max_atracciones_total ?? 999) >= cantidadPagas) ?? null;
 
   const fabdays = varianteFabdays ? { variante: varianteFabdays.variante, precio: varianteFabdays.precio_usd } : null;
   const fabflex = varianteFabflex ? { variante: varianteFabflex.variante, precio: varianteFabflex.precio_usd } : null;

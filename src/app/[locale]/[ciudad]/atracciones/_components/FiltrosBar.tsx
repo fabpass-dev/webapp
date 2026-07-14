@@ -52,7 +52,7 @@ export function Buscador() {
     <div className="mx-auto flex max-w-lg items-center rounded-full border border-fabpass-celeste bg-white shadow-sm">
       <input
         className="flex-1 rounded-full bg-transparent px-5 py-3 text-sm outline-none"
-        placeholder="¿Qué querés ver? Teatro Colón, Bombonera..."
+        placeholder="¿Qué querés ver?"
         value={texto}
         onChange={(e) => {
           setTexto(e.target.value);
@@ -85,13 +85,13 @@ export function FiltrosBar() {
   }
 
   return (
-    <div className="sticky top-16 z-20 flex flex-col gap-2 border-b border-fabpass-celeste bg-white px-4 py-2 sm:px-6">
-      <div className="flex gap-2 overflow-x-auto pb-1">
+    <div className="flex flex-col gap-3 border-b border-fabpass-celeste bg-white px-4 py-4 sm:px-6">
+      <div className="flex flex-wrap gap-2">
         {TIPOS.map((t) => (
           <button
             key={t.valor}
             onClick={() => setTipo(t.valor === "todos" ? "" : t.valor)}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-bold whitespace-nowrap ${
+            className={`rounded-full px-3 py-1.5 text-xs font-bold whitespace-nowrap ${
               (tipo || "todos") === t.valor ? (t.color ?? "bg-fabpass-azul text-white") : "border border-fabpass-celeste text-fabpass-cuerpo"
             }`}
           >
@@ -99,12 +99,12 @@ export function FiltrosBar() {
           </button>
         ))}
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="flex flex-wrap gap-2">
         {CATEGORIAS.map((c) => (
           <button
             key={c}
             onClick={() => toggleCat(c)}
-            className={`shrink-0 rounded-full px-3 py-1 text-xs whitespace-nowrap ${
+            className={`rounded-full px-3 py-1 text-xs whitespace-nowrap ${
               catsActivas.includes(c) ? "bg-fabpass-celeste-fondo font-semibold text-fabpass-azul" : "border border-fabpass-celeste text-fabpass-muted"
             }`}
           >
@@ -112,12 +112,12 @@ export function FiltrosBar() {
           </button>
         ))}
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="flex flex-wrap gap-2">
         {MAS_FILTROS.map((m) => (
           <button
             key={m.valor}
             onClick={() => toggleMas(m.valor)}
-            className={`shrink-0 rounded-full px-3 py-1 text-xs whitespace-nowrap ${
+            className={`rounded-full px-3 py-1 text-xs whitespace-nowrap ${
               masActivos.includes(m.valor) ? "bg-fabpass-celeste-fondo font-semibold text-fabpass-azul" : "border border-fabpass-celeste text-fabpass-muted"
             }`}
           >

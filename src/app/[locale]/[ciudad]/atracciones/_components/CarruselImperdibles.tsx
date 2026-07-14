@@ -21,7 +21,7 @@ export function CarruselImperdibles({ atracciones, base }: { atracciones: Atracc
             <h2 className="text-base font-bold text-fabpass-titulo">Imperdibles</h2>
             <p className="text-xs text-fabpass-muted">Las atracciones más elegidas por los turistas</p>
           </div>
-          <div className="flex gap-2">
+          <div className="hidden gap-2 sm:flex">
             <button onClick={() => scroll(-200)} className="flex h-8 w-8 items-center justify-center rounded-full border border-fabpass-celeste">
               <ChevronLeft size={16} />
             </button>

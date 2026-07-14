@@ -95,14 +95,33 @@ export default async function AtraccionesPage({
     .eq("ciudad_id", ciudadRow.id)
     .eq("activa", true);
 
-  const { data: imperdibles } = await supabase
+  // Entre 5 y 8 atracciones. Si hay menos de 5 marcadas como imperdibles,
+  // se completa con el resto (por rating si hay, si no por relevancia) hasta
+  // llegar a 5 — antes esto solo traía las marcadas, y con apenas 2 cargadas
+  // el carrusel quedaba corto sin llenar el ancho.
+  const CAMPOS_IMPERDIBLES =
+    "slug, nombre, tipo_pase, precio_mayor, descuento_porcentaje, gratuito, imperdible, requiere_reserva, rating, cantidad_reviews";
+  const { data: marcadasImperdibles } = await supabase
     .from("atracciones")
-    .select("slug, nombre, tipo_pase, precio_mayor, descuento_porcentaje, gratuito, imperdible, requiere_reserva, rating, cantidad_reviews")
+    .select(CAMPOS_IMPERDIBLES)
     .eq("ciudad_id", ciudadRow.id)
     .eq("activa", true)
     .eq("imperdible", true)
     .order("rating", { ascending: false, nullsFirst: false })
     .limit(8);
+
+  let imperdibles = marcadasImperdibles ?? [];
+  if (imperdibles.length < 5) {
+    const { data: relleno } = await supabase
+      .from("atracciones")
+      .select(CAMPOS_IMPERDIBLES)
+      .eq("ciudad_id", ciudadRow.id)
+      .eq("activa", true)
+      .eq("imperdible", false)
+      .order("relevancia", { ascending: false, nullsFirst: false })
+      .limit(8 - imperdibles.length);
+    imperdibles = [...imperdibles, ...(relleno ?? [])];
+  }
 
   // Bloques CTA intercalados cada 6 atracciones, rotando planificador → black → ahorro.
   const grupos: AtraccionCardData[][] = [];
@@ -129,8 +148,8 @@ export default async function AtraccionesPage({
 
         <FiltrosBar />
 
-        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:grid lg:grid-cols-[1fr_320px] lg:gap-8">
-          <div>
+        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:grid lg:grid-cols-[1fr_320px] lg:items-start lg:gap-8">
+          <div className="min-w-0">
             <div className="flex items-center justify-between">
               <p className="text-sm text-fabpass-cuerpo">Mostrando {lista.length} atracciones</p>
             </div>

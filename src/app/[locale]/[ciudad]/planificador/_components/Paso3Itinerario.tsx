@@ -155,7 +155,7 @@ export function Paso3Itinerario({
                     {tipo === "fabdays" ? "FabDays" : "FabFlex"} {formatVariante(info.variante)}
                   </p>
                   <p className="text-lg font-bold text-fabpass-azul">USD {info.precio} / persona</p>
-                  <p className="text-sm font-semibold text-fabpass-exito">Ahorro: USD {recomendacion.ahorro.toFixed(0)}</p>
+                  <p className="text-sm font-semibold text-fabpass-exito">Ahorro por persona: USD {recomendacion.ahorro.toFixed(0)}</p>
                 </div>
               );
             })}
